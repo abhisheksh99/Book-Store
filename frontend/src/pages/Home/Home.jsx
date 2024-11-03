@@ -7,15 +7,12 @@ import News from './News';
 const Home = () => {
   return (
     <>
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-1">
+
         <Banner />
         <TopSellers/>
         <Recommended />
         <News/>
       
-      </div>
-    </div>
     </>
 
   );
