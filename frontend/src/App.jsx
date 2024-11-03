@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import MainLayout from './components/MainLayout';
 import CartPage from './pages/books/CartPage';
+import Checkout from './pages/books/Checkout';
 
 
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Route>
       </Routes>
     </Router>
