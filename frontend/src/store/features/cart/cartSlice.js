@@ -13,8 +13,19 @@ export const cartSlice = createSlice({
       const existingItem = state.cartItems.find(
         (item) => item._id === action.payload._id
       );
-      if (!existingItem) {
-        state.cartItems.push(action.payload);
+      if (existingItem) {
+        // If item exists, increase the quantity
+        existingItem.quantity += 1;
+        Swal.fire({
+          position: "top-end",
+          icon: "info",
+          title: "Increased quantity in cart",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        // If item doesn't exist, add it with quantity 1
+        state.cartItems.push({ ...action.payload, quantity: 1 });
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -22,25 +33,24 @@ export const cartSlice = createSlice({
           showConfirmButton: false,
           timer: 1500,
         });
-      } else {
-        Swal.fire({
-          title: "Are you sure?",
-          text: "Item already in cart",
-          icon: "warning",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok"
-        });
       }
     },
-    removeFromCart: (state,action) =>{
-        state.cartItems = state.cartItems.filter(item => item._id !== action.payload._id)
+    removeFromCart: (state, action) => {
+      const existingItem = state.cartItems.find(item => item._id === action.payload._id);
+      if (existingItem && existingItem.quantity > 1) {
+        // Decrease quantity if more than one
+        existingItem.quantity -= 1;
+      } else {
+        // Remove the item if quantity is 1
+        state.cartItems = state.cartItems.filter(item => item._id !== action.payload._id);
+      }
     },
     clearCart: (state) => {
-        state.cartItems = []
+      state.cartItems = [];
     }
   },
 });
 
-export const { addToCart,removeFromCart,clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

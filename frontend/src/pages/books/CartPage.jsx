@@ -2,19 +2,23 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getImgUrl } from "../../utils/getImagUrl";
-import { clearCart, removeFromCart } from '../../store/features/cart/cartSlice';
+import { clearCart, removeFromCart, addToCart } from '../../store/features/cart/cartSlice';
 
 const CartPage = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.newPrice, 0).toFixed(2);
-  const dispatch = useDispatch()
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.newPrice * item.quantity, 0).toFixed(2);
+  const dispatch = useDispatch();
 
-  const handleRemoveFromCart = (item) =>{
-    dispatch(removeFromCart(item))
-  }
+  const handleRemoveFromCart = (item) => {
+    dispatch(removeFromCart(item));
+  };
+
+  const handleIncreaseQuantity = (item) => {
+    dispatch(addToCart(item));
+  };
 
   const handleClearCart = () => {
-   dispatch(clearCart())
+    dispatch(clearCart());
   };
 
   return (
@@ -53,20 +57,33 @@ const CartPage = () => {
                           <h3>
                             <Link to={`/product/${item._id}`}>{item.title}</Link>
                           </h3>
-                          <p className="sm:ml-4">${item.newPrice}</p>
+                          <p className="sm:ml-4">${(item.newPrice * item.quantity).toFixed(2)}</p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500 capitalize">
                           <strong>Category:</strong> {item.category}
                         </p>
                       </div>
                       <div className="flex flex-1 flex-wrap items-end justify-between space-y-2 text-sm">
-                        <p className="text-gray-500">
-                          <strong>Qty:</strong> 1
-                        </p>
+                        <div className="text-gray-500 flex items-center space-x-2">
+                          <strong>Qty:</strong>
+                          <button
+                            onClick={() => handleRemoveFromCart(item)}
+                            className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                          >
+                            -
+                          </button>
+                          <span>{item.quantity}</span>
+                          <button
+                            onClick={() => handleIncreaseQuantity(item)}
+                            className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                          >
+                            +
+                          </button>
+                        </div>
 
                         <div className="flex">
                           <button
-                          onClick={()=>handleRemoveFromCart(item)}
+                            onClick={() => handleRemoveFromCart(item)}
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
                           >
