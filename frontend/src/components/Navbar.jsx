@@ -6,6 +6,7 @@ import { FaRegUser } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa6";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import avatarImg from "../assets/avatar.png";
+import { useSelector } from "react-redux";
 
 const navigation = [
   {
@@ -29,6 +30,7 @@ const navigation = [
 const Navbar = () => {
   const currentUser = false;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const cartItems = useSelector(state => state.cart.cartItems)
 
   return (
     <header className="max-w-screen-2xl mx-auto px-4 py-6">
@@ -88,7 +90,10 @@ const Navbar = () => {
           </button>
           <Link to="/cart" className="bg-primary p-1 sm:px-6 px-2 flex items-center rounded-md">
             <HiMiniShoppingCart className="size-6" />
-            <span className="text-sm font-semibold sm:ml-1">0</span>
+            {
+              cartItems.length > 0 ? <span className="text-sm font-semibold sm:ml-1">{cartItems.length}</span> : <span className="text-sm font-semibold sm:ml-1">0</span>
+            }
+            
           </Link>
         </div>
       </nav>
