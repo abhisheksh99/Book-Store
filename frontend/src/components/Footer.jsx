@@ -1,10 +1,13 @@
 import React from 'react'
 
 const Footer = () => {
+    const getFullYear= new Date().getFullYear()
   return (
-    <div>
-      Footer
-    </div>
+    <footer className='flex -items-center justify-center'>
+        Copyright &copy; {getFullYear}
+
+    </footer>
+
   )
 }
 
