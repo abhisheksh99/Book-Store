@@ -1,11 +1,12 @@
 import express from "express";
 import { deleteBook, getAllBooks, getSingleBook, postABook, updateBook } from "../controllers/bookController.js";
+import verifyAdminToken from "../middleware/verifyAdmin.js";
 
 const router = express.Router();
 
 // Route to create a new book
 // POST /create-book - Calls the postABook controller to add a new book to the database
-router.route("/create-book").post(postABook);
+router.route("/create-book").post(verifyAdminToken,postABook);
 
 // Route to retrieve all books
 // GET / - Calls the getAllBooks controller to retrieve a list of all books

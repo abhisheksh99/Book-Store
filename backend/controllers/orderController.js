@@ -49,3 +49,13 @@ export const createOrder = asyncHandler(async (req, res) => {
         });
     }
 });
+
+export const getOrderByEmail = asyncHandler(async (req, res) => {
+    const { email } = req.params;
+    const orders = await Order.find({ email }).sort({ createdAt: -1 });
+
+    if (orders.length === 0) {
+        return res.status(404).json({ message: "No orders found for this email" });
+    }
+    res.status(200).json(orders);
+});
