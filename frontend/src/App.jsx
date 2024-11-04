@@ -6,6 +6,7 @@ import Register from './components/Register';
 import MainLayout from './components/MainLayout';
 import CartPage from './pages/books/CartPage';
 import Checkout from './pages/books/Checkout';
+import SingleBook from './pages/books/SingleBook';
 
 
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/books/:id" element={<SingleBook/>} />
         </Route>
       </Routes>
     </Router>
