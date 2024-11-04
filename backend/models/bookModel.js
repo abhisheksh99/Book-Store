@@ -29,6 +29,10 @@ const bookSchema = new mongoose.Schema({
     type: Number,
     required: [true, "New price is required"],
   },
+  createdAt:{
+    type:Date,
+    default: new Date()
+  },
 }, {
   timestamps: true,
 });
