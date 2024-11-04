@@ -9,6 +9,7 @@ import Checkout from './pages/books/Checkout';
 import SingleBook from './pages/books/SingleBook';
 import { AuthProvider } from './context/authContext';
 import PrivateRoute from './components/PrivateRoute';
+import Order from './pages/books/Order';
 
 
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+          <Route path="/orders" element={<PrivateRoute><Order/></PrivateRoute>} />
           <Route path="/books/:id" element={<SingleBook/>} />
         </Route>
       </Routes>

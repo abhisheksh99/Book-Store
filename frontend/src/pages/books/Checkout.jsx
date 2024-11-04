@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/authContext';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useCreateOrderMutation } from '../../store/features/orders/orderApi';
+
 
 const Checkout = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -19,6 +21,9 @@ const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalPrice = cartItems.reduce((acc, item) => acc + item.newPrice * item.quantity, 0).toFixed(2);
 
+  const [createOrder, { isLoading, isError, error }] = useCreateOrderMutation();
+  const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -27,7 +32,7 @@ const Checkout = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Order submitted");
     console.log("Form Data:", formData);
@@ -51,8 +56,24 @@ const Checkout = () => {
     };
   
     console.log("New Order:", newOrder);
+    
+    try {
+      const result = await createOrder(newOrder).unwrap();
+      console.log("Order created successfully:", result);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, placed order!"
+      })
+      navigate("/orders")
+    } catch (err) {
+      console.error("Failed to create order:", err);
+    }
   };
-  
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -86,6 +107,7 @@ const Checkout = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -99,19 +121,21 @@ const Checkout = () => {
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                     placeholder="email@domain.com"
+                    required
                   />
                 </div>
 
                 <div className="md:col-span-5">
                   <label htmlFor="phone">Phone Number</label>
                   <input
-                    type="number"
+                    type="tel"
                     name="phone"
                     id="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                     placeholder="+123 456 7890"
+                    required
                   />
                 </div>
 
@@ -124,6 +148,7 @@ const Checkout = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -136,6 +161,7 @@ const Checkout = () => {
                     value={formData.city}
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -148,6 +174,7 @@ const Checkout = () => {
                     onChange={handleInputChange}
                     placeholder="Country"
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -160,6 +187,7 @@ const Checkout = () => {
                     onChange={handleInputChange}
                     placeholder="State"
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -172,6 +200,7 @@ const Checkout = () => {
                     value={formData.zipcode}
                     onChange={handleInputChange}
                     className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                    required
                   />
                 </div>
 
@@ -184,6 +213,7 @@ const Checkout = () => {
                       checked={isChecked}
                       onChange={handleCheckboxChange}
                       className="form-checkbox"
+                      required
                     />
                     <label htmlFor="billing_same" className="ml-2">
                       I agree to the <Link className="underline underline-offset-2 text-blue-600">Terms & Conditions</Link> and <Link className="underline underline-offset-2 text-blue-600">Shopping Policy</Link>.
@@ -191,12 +221,15 @@ const Checkout = () => {
                   </div>
                 </div>
 
+                {isError && <div className="md:col-span-5 text-red-500">Error: {error?.data?.message || 'Failed to create order'}</div>}
+
                 <div className="md:col-span-5 text-right">
                   <button
-                    disabled={!isChecked}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    type="submit"
+                    disabled={!isChecked || isLoading}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
                   >
-                    Place an Order
+                    {isLoading ? 'Placing Order...' : 'Place an Order'}
                   </button>
                 </div>
               </div>
