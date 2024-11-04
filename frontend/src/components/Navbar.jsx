@@ -1,36 +1,25 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HiMiniBars3CenterLeft } from "react-icons/hi2";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaRegUser } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa6";
+import { FaRegUser, FaRegHeart } from "react-icons/fa6";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import avatarImg from "../assets/avatar.png";
 import { useSelector } from "react-redux";
+import { useAuth } from "../context/authContext";
 
 const navigation = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-  },
-  {
-    name: "Orders",
-    href: "/orders",
-  },
-  {
-    name: "Cart Page",
-    href: "/cart",
-  },
-  {
-    name: "Check Out",
-    href: "/checkout",
-  },
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Orders", href: "/orders" },
+  { name: "Cart Page", href: "/cart" },
+  { name: "Check Out", href: "/checkout" },
 ];
 
 const Navbar = () => {
-  const currentUser = false;
+  const { user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const cartItems = useSelector(state => state.cart.cartItems)
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   return (
     <header className="max-w-screen-2xl mx-auto px-4 py-6">
@@ -55,13 +44,13 @@ const Navbar = () => {
         {/* Right Side */}
         <div className="flex relative items-center md:space-x-3 space-x-2">
           <div>
-            {currentUser ? (
+            {user ? (
               <>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                   <img
                     src={avatarImg}
                     alt="Logged in user"
-                    className={`size-7 rounded-full ${currentUser ? "ring-2 ring-blue-500" : ""}`}
+                    className="size-7 rounded-full ring-2 ring-blue-500"
                   />
                 </button>
                 {/* Dropdown */}
@@ -69,12 +58,24 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-40">
                     <ul className="py-2">
                       {navigation.map((item) => (
-                        <li key={item.name} onClick={()=>setIsDropdownOpen(false)}>
+                        <li key={item.name} onClick={() => setIsDropdownOpen(false)}>
                           <Link to={item.href} className="block px-4 py-2 text-sm hover:bg-gray-200">
                             {item.name}
                           </Link>
                         </li>
                       ))}
+                      <li>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setIsDropdownOpen(false);
+                            navigate("/login"); // Redirect to login
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                        >
+                          Logout
+                        </button>
+                      </li>
                     </ul>
                   </div>
                 )}
@@ -90,10 +91,11 @@ const Navbar = () => {
           </button>
           <Link to="/cart" className="bg-primary p-1 sm:px-6 px-2 flex items-center rounded-md">
             <HiMiniShoppingCart className="size-6" />
-            {
-              cartItems.length > 0 ? <span className="text-sm font-semibold sm:ml-1">{cartItems.length}</span> : <span className="text-sm font-semibold sm:ml-1">0</span>
-            }
-            
+            {cartItems.length > 0 ? (
+              <span className="text-sm font-semibold sm:ml-1">{cartItems.length}</span>
+            ) : (
+              <span className="text-sm font-semibold sm:ml-1">0</span>
+            )}
           </Link>
         </div>
       </nav>

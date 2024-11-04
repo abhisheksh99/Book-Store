@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 const Checkout = () => {
   const [isChecked, setIsChecked] = useState(false);

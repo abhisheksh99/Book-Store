@@ -7,7 +7,8 @@ import {
     sendPasswordResetEmail,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    signOut
 } from "firebase/auth";
 
 // Create the AuthContext
@@ -101,6 +102,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Logout function
+    const logout = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            await signOut(auth);
+            setUser(null);
+        } catch (error) {
+            handleAuthError(error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Error handler for authentication errors
     const handleAuthError = (error) => {
         console.error("Auth error:", error);
@@ -147,7 +163,8 @@ export const AuthProvider = ({ children }) => {
         registerUser,
         signIn,
         signInWithGoogle,
-        forgotPassword
+        forgotPassword,
+        logout // add logout to the context value
     };
 
     return (
